@@ -33,7 +33,7 @@ export class LoginComponent {
   login() {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: () => this.router.navigate(['/products']),
+        next: () => this.router.navigate(['']),
         error: (err) => alert('Login failed! ' + err.error.message),
       });
     }
