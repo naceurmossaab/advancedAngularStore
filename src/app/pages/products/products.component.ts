@@ -7,6 +7,16 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProductFormDialogComponent } from '../../components/product-form-dialog/product-form-dialog.component';
+import { AuthService } from '../../services/auth.service';
+import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-products',
@@ -14,37 +24,100 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     NgIf,
     NgFor,
+    FormsModule,
     RouterModule,
     MatPaginatorModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
     CurrencyPipe
   ],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.scss'],
+  animations: [
+    trigger('listAnimation', [
+      transition(':enter', [
+        query('mat-card', [
+          style({ opacity: 0, transform: 'translateY(20px)' }),
+          stagger(100, animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })))
+        ], { optional: true })
+      ])
+    ])
+  ]
 })
+
 export class ProductsComponent {
+  private authService = inject(AuthService);
   private productService = inject(ProductService);
+  private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
+  debouceTimer: any;
+  isAdmin: Boolean = false;
   products: Product[] = [];
   totalProducts = 0;
   pageSize = 10;
   currentPage = 1;
 
+  // Filters
+  searchQuery = '';
+  selectedCategory = '';
+  minPrice?: number;
+  maxPrice?: number;
+  inStock: boolean = true;
+
+  categories = ['Electronics', 'Clothing', 'Home', 'Sports'];
+
   constructor() {
     this.loadProducts();
+    this.authService.authUser$.subscribe(user => this.isAdmin = user?.role === 'admin');
+  }
+
+  searchByName(): void {
+    //using debounce to avoid multiple api calls
+    clearTimeout(this.debouceTimer);
+    this.debouceTimer = setTimeout(() => this.loadProducts(), 500);
   }
 
   loadProducts() {
-    this.productService.getProducts(this.currentPage, this.pageSize).subscribe((data) => {
-      this.products = data.data;
-      this.totalProducts = data.total;
-    });
+    this.productService
+      .getProducts(this.currentPage, this.pageSize, this.searchQuery, this.selectedCategory, this.minPrice, this.maxPrice, this.inStock)
+      .subscribe(({ data, total }) => {
+        this.products = data;
+        this.totalProducts = total;
+      });
   }
 
   onPageChange(event: PageEvent) {
     this.currentPage = event.pageIndex + 1;
     this.pageSize = event.pageSize;
     this.loadProducts();
+  }
+
+  openProductForm(product?: Product) {
+    const dialogRef = this.dialog.open(ProductFormDialogComponent, {
+      width: '950px',
+      data: { product },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadProducts();
+        this.snackBar.open('Product saved successfully', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  deleteProduct(productId: number) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      this.productService.deleteProduct(productId).subscribe(() => {
+        this.loadProducts();
+        this.snackBar.open('Product deleted', 'Close', { duration: 3000 });
+      });
+    }
   }
 }

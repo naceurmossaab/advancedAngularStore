@@ -1,24 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
+import { AuthUser } from '../models/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = 'http://localhost:3000/api/v1/auth';
-  private userSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
+  private userSubject = new BehaviorSubject<AuthUser | undefined>(undefined);
 
-  user$ = this.userSubject.asObservable();
+  authUser$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.getLoggedInUser(token).subscribe();
+    }
+  }
 
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<AuthUser>(`${this.apiUrl}/login`, credentials).pipe(
       tap((response) => {
         localStorage.setItem('token', response.token);
-        this.userSubject.next(true);
+        this.userSubject.next(response);
       })
     );
   }
@@ -29,7 +35,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
-    this.userSubject.next(false);
+    this.userSubject.next(undefined);
     this.router.navigate(['/auth/login']);
   }
 
@@ -39,5 +45,22 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  isUserLoggedIn() {
+    const token = localStorage.getItem('token');
+    if (token) this.getLoggedInUser(token).subscribe();
+  }
+
+  private getLoggedInUser(token: string): Observable<AuthUser | undefined> {
+    return this.http
+      .get<AuthUser>(`${this.apiUrl}/me`, { withCredentials: true })
+      .pipe(tap((user) => { this.userSubject.next(user) }),
+        catchError((error) => {
+          console.error('Failed to fetch logged-in user:', error);
+          this.userSubject.next(undefined);
+          return of(undefined);
+        })
+      );
   }
 }

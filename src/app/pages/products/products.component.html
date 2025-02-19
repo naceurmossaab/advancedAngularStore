@@ -1,5 +1,39 @@
-<h5 class="products-title">Products</h5>
-<div class="products-list" *ngIf="products.length; else noProducts">
+<div class="products-title">
+  <h5>Products</h5>
+  <button mat-raised-button color="primary" *ngIf="isAdmin" (click)="openProductForm()">Add Product</button>
+</div>
+
+<div class="filters">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Search</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (input)="searchByName()" placeholder="Search by name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Category</mat-label>
+    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="loadProducts()">
+      <mat-option value="">All Categories</mat-option>
+      <mat-option *ngFor="let category of categories" [value]="category">{{ category }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="price-filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Min Price</mat-label>
+      <input matInput type="number" [(ngModel)]="minPrice" (input)="loadProducts()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Max Price</mat-label>
+      <input matInput type="number" [(ngModel)]="maxPrice" (input)="loadProducts()" />
+    </mat-form-field>
+  </div>
+
+  <mat-checkbox [(ngModel)]="inStock" (change)="loadProducts()">In Stock Only</mat-checkbox>
+</div>
+
+<div class="products-list" *ngIf="products.length; else noProducts" @listAnimation>
   <mat-card *ngFor="let product of products" class="product-card">
     <mat-card-header>
       <mat-card-title class="product-title">{{product.name}}</mat-card-title>
@@ -16,13 +50,19 @@
         <p class="product-subtitle out-stock">Out stock</p>
       </ng-template>
     </mat-card-content>
-    <mat-card-actions class="product-buttons">
-      <button mat-button color="primary" [disabled]="product.stock === 0">Add to Cart</button>
-      <button mat-icon-button color="warn">
-        <mat-icon>favorite_border</mat-icon>
-        <!-- <mat-icon>favorite</mat-icon> -->
-      </button>
+    <mat-card-actions class="product-buttons" *ngIf="isAdmin; else isUser">
+      <button mat-button color="accent" (click)="openProductForm(product)">Edit</button>
+      <button mat-button color="warn" (click)="deleteProduct(product.id)">Delete</button>
     </mat-card-actions>
+    <ng-template #isUser>
+      <mat-card-actions class="product-buttons">
+        <button mat-button color="primary" [disabled]="product.stock === 0">Add to Cart</button>
+        <button mat-icon-button color="warn">
+          <mat-icon>favorite_border</mat-icon>
+          <!-- <mat-icon>favorite</mat-icon> -->
+        </button>
+      </mat-card-actions>
+    </ng-template>
   </mat-card>
 </div>
 

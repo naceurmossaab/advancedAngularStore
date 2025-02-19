@@ -5,6 +5,7 @@ import { AuthService } from '../../../services/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
@@ -15,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatButtonModule
   ],
   templateUrl: './register.component.html',
@@ -22,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  hidePassword: Boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.fb.group({
