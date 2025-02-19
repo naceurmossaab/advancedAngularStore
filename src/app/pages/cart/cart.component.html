@@ -19,7 +19,10 @@
 
   <div class="cart-footer">
     <h3>Total: {{ cart.totalPrice | currency }}</h3>
-    <button mat-raised-button color="warn" (click)="clearCart()">🗑 Clear Cart</button>
+    <div class="cart-footer-btn">
+      <button mat-raised-button color="primary" (click)="checkout()">💳 Checkout</button>
+      <button mat-raised-button color="warn" (click)="clearCart()">🗑 Clear Cart</button>
+    </div>
   </div>
 </div>
 

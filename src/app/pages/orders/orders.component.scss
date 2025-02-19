@@ -1,0 +1,11 @@
+.order-list {
+  display: grid;
+  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15em), 1fr));
+  justify-content: center;
+
+  .order-card {
+    max-width: 350px;
+    padding: 10px;
+  }
+}

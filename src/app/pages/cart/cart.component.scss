@@ -33,9 +33,18 @@ h2 {
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
+
+  .cart-footer-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
 }
 
+
 .empty-cart-message {
+  margin-top: 50px;
   text-align: center;
   font-size: 18px;
   color: gray;
