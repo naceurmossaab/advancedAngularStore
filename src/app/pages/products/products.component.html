@@ -56,7 +56,7 @@
     </mat-card-actions>
     <ng-template #isUser>
       <mat-card-actions class="product-buttons">
-        <button mat-button color="primary" [disabled]="product.stock === 0">Add to Cart</button>
+        <button mat-button color="primary" [disabled]="product.stock === 0" (click)="addToCart(product.id)">Add to Cart</button>
         <button mat-icon-button color="warn">
           <mat-icon>favorite_border</mat-icon>
           <!-- <mat-icon>favorite</mat-icon> -->

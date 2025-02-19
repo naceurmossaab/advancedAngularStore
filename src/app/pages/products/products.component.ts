@@ -17,6 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductFormDialogComponent } from '../../components/product-form-dialog/product-form-dialog.component';
 import { AuthService } from '../../services/auth.service';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-products',
@@ -53,6 +54,7 @@ import { trigger, transition, query, style, stagger, animate } from '@angular/an
 export class ProductsComponent {
   private authService = inject(AuthService);
   private productService = inject(ProductService);
+  private cartService = inject(CartService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
@@ -119,5 +121,11 @@ export class ProductsComponent {
         this.snackBar.open('Product deleted', 'Close', { duration: 3000 });
       });
     }
+  }
+
+  addToCart(productId: number) {
+    this.cartService.addToCart(productId).subscribe(() => {
+      this.snackBar.open('Product added to cart', 'Close', { duration: 3000 });
+    });
   }
 }
