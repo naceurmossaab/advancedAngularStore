@@ -1,1 +1,35 @@
-<p>products works!</p>
+<h5 class="products-title">Products</h5>
+<div class="products-list" *ngIf="products.length; else noProducts">
+  <mat-card *ngFor="let product of products" class="product-card">
+    <mat-card-header>
+      <mat-card-title class="product-title">{{product.name}}</mat-card-title>
+      <mat-card-subtitle class="product-currency">
+        {{ product.category }} - <span class="in-stock">{{ product.price | currency }}</span>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="product-description">
+      <p *ngIf="product.description">{{ product.description }}</p>
+      <p class="product-subtitle in-stock" *ngIf="product.stock > 0; else outStock">
+        {{ product.stock}} available
+      </p>
+      <ng-template #outStock>
+        <p class="product-subtitle out-stock">Out stock</p>
+      </ng-template>
+    </mat-card-content>
+    <mat-card-actions class="product-buttons">
+      <button mat-button color="primary" [disabled]="product.stock === 0">Add to Cart</button>
+      <button mat-icon-button color="warn">
+        <mat-icon>favorite_border</mat-icon>
+        <!-- <mat-icon>favorite</mat-icon> -->
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<mat-paginator [length]="totalProducts" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+  (page)="onPageChange($event)" *ngIf="products.length">
+</mat-paginator>
+
+<ng-template #noProducts>
+  <p class="product-title">No products available.</p>
+</ng-template>
