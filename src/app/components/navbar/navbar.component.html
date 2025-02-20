@@ -1,7 +1,10 @@
 <mat-toolbar color="primary">
   <span style="margin-inline: 10px;">My Store</span>
   <button mat-button routerLink="/products">Products</button>
-  <button *ngIf="authUser && !isAdmin" mat-button routerLink="/orders">Orders</button>
+  <ng-container *ngIf="authUser">
+    <button *ngIf="!isAdmin" mat-button routerLink="/orders">Orders</button>
+    <button *ngIf="!isAdmin" mat-button routerLink="/wishlist">Wishlist</button>
+  </ng-container>
 
   <span class="spacer"></span>
 

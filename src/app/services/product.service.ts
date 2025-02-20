@@ -36,14 +36,14 @@ export class ProductService {
   }
 
   createProduct(product: Product): Observable<any> {
-    return this.http.post(this.apiUrl, product, { withCredentials: true });
+    return this.http.post(this.apiUrl, product);
   }
 
   updateProduct(id: number, product: Product): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, product, { withCredentials: true });
+    return this.http.patch(`${this.apiUrl}/${id}`, product);
   }
 
   deleteProduct(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

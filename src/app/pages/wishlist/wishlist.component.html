@@ -1,0 +1,17 @@
+<div class="wishlist-container">
+  <h2>My Wishlist</h2>
+
+  <div *ngIf="wishlist.length === 0">
+    <p>Your wishlist is empty.</p>
+  </div>
+
+  <mat-card *ngFor="let item of wishlist" class="wishlist-card">
+    <mat-card-title>{{ item.product.name }}</mat-card-title>
+    <mat-card-content>
+      <p>Price: ${{ item.product.price }}</p>
+      <button mat-raised-button color="warn" (click)="removeFromWishlist(item.product.id)">
+        Remove
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

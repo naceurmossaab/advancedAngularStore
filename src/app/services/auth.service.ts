@@ -59,6 +59,7 @@ export class AuthService {
         catchError((error) => {
           console.error('Failed to fetch logged-in user:', error);
           this.userSubject.next(undefined);
+          localStorage.removeItem('token');
           return of(undefined);
         })
       );
