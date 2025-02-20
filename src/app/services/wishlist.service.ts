@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WishlistService {
-  private apiUrl = 'http://localhost:3000/api/v1/wishlist';
+  private apiUrl = environment.apiUrl + 'wishlist';
   private http = inject(HttpClient);
 
   getWishlist(userId: number): Observable<any[]> {

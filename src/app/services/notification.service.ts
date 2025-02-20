@@ -1,13 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable, Subject } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
   private socket: Socket;
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
   private refreshProductsSubject = new Subject<void>();
 
 
