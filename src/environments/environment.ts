@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://angularstoreapi.onrender.com/'
+  apiUrl: 'https://nestjsstoreapi-production.up.railway.app/'
 };
