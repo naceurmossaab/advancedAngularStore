@@ -20,6 +20,7 @@ import { trigger, transition, query, style, stagger, animate } from '@angular/an
 import { CartService } from '../../services/cart.service';
 import { WishlistService } from '../../services/wishlist.service';
 import { AuthUser } from '../../models/auth';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-products',
@@ -58,6 +59,7 @@ export class ProductsComponent {
   private productService = inject(ProductService);
   private cartService = inject(CartService);
   private wishlistService = inject(WishlistService);
+  private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
@@ -85,6 +87,9 @@ export class ProductsComponent {
       this.authUser = user;
       this.isAdmin = user?.role === 'admin';
       if (user?.role === 'user') this.loadWishlist();
+    });
+    this.notificationService.refreshProducts$.subscribe(() => {
+      this.loadProducts(); // Refresh the product list when notification is received
     });
   }
 
