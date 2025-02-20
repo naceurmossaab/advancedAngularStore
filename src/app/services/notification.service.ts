@@ -8,10 +8,10 @@ import { environment } from '../../environments/environment.development';
 })
 export class NotificationService {
   private socket: Socket;
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl.replace('/api/v1', '');
   private refreshProductsSubject = new Subject<void>();
-
-
+  
+  
   constructor() {
     this.socket = io(this.apiUrl);
   }
